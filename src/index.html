@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>PAK RT!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root{
+        --oren:#F97316; --oren-tua:#C2410C; --biru:#2563EB; --biru-tua:#1D4ED8;
+        --krem:#FFF7ED; --krem-2:#FFEDD5; --cokelat:#9A3412; --teks:#431407;
+        --teks-lembut:#7C2D12; --putih:#FFFFFF; --garis:#FDBA74;
+        --hijau:#15803D; --merah:#DC2626; --amber:#B45309;
+        --radius-kartu:16px; --radius-tombol:12px;
+      }
+      *{ box-sizing:border-box; }
+      html,body{ margin:0; padding:0; }
+      body{
+        font-family:"Work Sans",system-ui,sans-serif; color:var(--teks);
+        background-color:var(--krem);
+        background-image:radial-gradient(#FED7AA 1.1px, transparent 1.1px);
+        background-size:22px 22px;
+        min-height:100vh;
+      }
+      h1,h2,h3,.font-judul{ font-family:"Outfit",sans-serif; }
+      button{ font-family:inherit; cursor:pointer; }
+      button:focus-visible, a:focus-visible{ outline:3px solid var(--biru); outline-offset:2px; }
+      .app{ max-width:480px; margin:0 auto; padding:16px 16px 40px; position:relative; }
+      [hidden]{ display:none !important; }
+
+      /* ---------- umum ---------- */
+      .btn{
+        display:flex; align-items:center; justify-content:center; gap:8px;
+        width:100%; min-height:52px; padding:12px 16px; border-radius:var(--radius-tombol);
+        font-size:16px; font-weight:700; border:2px solid transparent; text-align:center;
+        transition:transform .12s ease, background-color .15s ease, border-color .15s ease;
+      }
+      .btn:active{ transform:scale(.98); }
+      .btn-primer{ background:var(--oren); color:var(--teks); border-color:var(--oren-tua); box-shadow:0 3px 0 var(--oren-tua); }
+      .btn-primer:hover{ background:#FB8B3C; }
+      .btn-sekunder{ background:var(--putih); color:var(--biru); border-color:var(--biru); box-shadow:0 3px 0 var(--biru-tua); }
+      .btn-sekunder:hover{ background:#EFF6FF; }
+      .btn-kecil{
+        display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:8px 12px;
+        border-radius:10px; border:2px solid var(--garis); background:var(--putih);
+        color:var(--teks); font-size:14px; font-weight:600;
+      }
+      .btn-kecil:hover{ border-color:var(--oren); }
+      .lencana{
+        display:inline-flex; align-items:center; gap:6px; background:var(--biru); color:#fff;
+        font-family:"Outfit",sans-serif; font-weight:700; font-size:13px; letter-spacing:.06em;
+        padding:5px 12px; border-radius:999px;
+      }
+      .putus{ border:none; border-top:2px dashed var(--garis); margin:18px 0; }
+      .ikon{ width:20px; height:20px; flex:none; }
+
+      /* ---------- menu ---------- */
+      .menu-atas{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+      .poster{
+        background:var(--putih); border:2px solid var(--garis); border-radius:var(--radius-kartu);
+        padding:26px 20px 22px; text-align:center; position:relative;
+        box-shadow:0 4px 0 rgba(154,52,18,.12);
+      }
+      .poster::before,.poster::after{
+        content:""; position:absolute; top:-9px; width:18px; height:18px; border-radius:50%;
+        background:var(--oren); border:3px solid var(--krem-2);
+      }
+      .poster::before{ left:36px; } .poster::after{ right:36px; }
+      .judul-besar{
+        font-size:56px; line-height:1; margin:10px 0 4px; color:var(--cokelat);
+        font-weight:800; letter-spacing:.01em;
+      }
+      .subjudul{ font-family:"Outfit",sans-serif; font-size:19px; font-weight:600; color:var(--biru); margin:0 0 14px; }
+      .cara-main{ text-align:left; margin:0 auto; max-width:340px; padding:0; list-style:none; }
+      .cara-main li{ display:flex; gap:10px; align-items:flex-start; padding:5px 0; font-size:15px; line-height:1.45; }
+      .cara-main .no{
+        flex:none; width:24px; height:24px; border-radius:50%; background:var(--oren); color:var(--teks);
+        font-family:"Outfit",sans-serif; font-weight:700; font-size:14px;
+        display:flex; align-items:center; justify-content:center; margin-top:1px;
+      }
+      .skor-terbaik{
+        display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+        background:var(--krem); border:2px dashed var(--garis); border-radius:999px;
+        padding:7px 16px; font-weight:700; color:var(--cokelat); font-size:15px;
+      }
+      .menu-tombol{ display:grid; gap:10px; margin-top:18px; }
+      .seksi-judul{ font-size:20px; font-weight:700; color:var(--cokelat); margin:26px 0 10px; display:flex; align-items:center; gap:8px; }
+      .galeri{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+      .pencapaian{
+        background:var(--putih); border:2px solid var(--garis); border-radius:14px; padding:12px;
+        display:flex; gap:10px; align-items:flex-start;
+      }
+      .pencapaian .ikon-bungkus{
+        flex:none; width:40px; height:40px; border-radius:10px; background:var(--krem-2);
+        display:flex; align-items:center; justify-content:center; color:var(--cokelat);
+      }
+      .pencapaian h3{ font-size:15px; margin:0 0 2px; color:var(--teks); }
+      .pencapaian p{ font-size:12.5px; margin:0; color:var(--teks-lembut); line-height:1.4; }
+      .pencapaian.terkunci{ opacity:.62; }
+      .pencapaian.terkunci .ikon-bungkus{ background:#F3F4F6; color:#6B7280; }
+      .pencapaian .status{ font-size:11px; font-weight:700; letter-spacing:.05em; margin-top:5px; display:inline-block; }
+      .pencapaian .status.buka{ color:var(--hijau); }
+      .pencapaian .status.kunci{ color:#6B7280; }
+      .riwayat{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+      .riwayat li{
+        background:var(--putih); border:2px solid var(--garis); border-radius:12px; padding:10px 14px;
+        display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:14px;
+      }
+      .riwayat .hasil{ font-weight:700; }
+      .riwayat .hasil.menang{ color:var(--hijau); }
+      .riwayat .hasil.kalah{ color:var(--merah); }
+      .riwayat .meta{ color:var(--teks-lembut); font-size:13px; text-align:right; }
+      .riwayat-kosong{ font-size:14.5px; color:var(--teks-lembut); background:var(--putih); border:2px dashed var(--garis); border-radius:12px; padding:14px; text-align:center; margin:0; }
+
+      /* ---------- layar main ---------- */
+      .kepala-main{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; }
+      .hari-label{ font-family:"Outfit",sans-serif; font-size:22px; font-weight:700; color:var(--cokelat); }
+      .kepala-kanan{ display:flex; gap:8px; align-items:center; }
+      .strip-hari{ display:grid; grid-template-columns:repeat(10,1fr); gap:4px; margin-bottom:14px; }
+      .strip-hari span{
+        aspect-ratio:1/1; border-radius:6px; background:var(--putih); border:1.5px solid var(--garis);
+        display:flex; align-items:center; justify-content:center;
+        font-size:10.5px; font-weight:600; color:var(--teks-lembut);
+      }
+      .strip-hari span.lewat{ background:var(--oren); border-color:var(--oren-tua); color:var(--teks); }
+      .strip-hari span.kini{ background:var(--biru); border-color:var(--biru-tua); color:#fff; box-shadow:0 0 0 2px #BFDBFE; }
+      .meter-bungkus{ display:grid; gap:10px; margin-bottom:16px; }
+      .meter{
+        background:var(--putih); border:2px solid var(--garis); border-radius:12px; padding:9px 12px 11px;
+      }
+      .meter .baris{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+      .meter .nama{ display:flex; align-items:center; gap:7px; font-weight:700; font-size:14.5px; }
+      .meter .nama .ikon{ width:18px; height:18px; }
+      .meter .nilai{ font-weight:700; font-size:14.5px; font-variant-numeric:tabular-nums; }
+      .meter .rel{ height:10px; border-radius:999px; background:var(--krem-2); overflow:hidden; }
+      .meter .isi{ height:100%; border-radius:999px; transition:width 400ms ease-out; }
+      .isi-kas{ background:var(--oren); } .isi-rukun{ background:#16A34A; } .isi-rep{ background:var(--biru); }
+      .meter.kritis{ border-color:var(--merah); animation:denyut 1s ease-in-out infinite; }
+      .meter.kritis .nilai{ color:var(--merah); }
+      @keyframes denyut{
+        0%,100%{ box-shadow:0 0 0 0 rgba(220,38,38,.0); }
+        50%{ box-shadow:0 0 0 5px rgba(220,38,38,.25); }
+      }
+
+      .kartu{
+        background:var(--putih); border:2px solid var(--garis); border-radius:var(--radius-kartu);
+        padding:20px 18px; position:relative; box-shadow:0 4px 0 rgba(154,52,18,.10);
+        animation:masuk .38s ease-out;
+      }
+      @keyframes masuk{
+        from{ opacity:0; transform:translateY(26px) rotate(1.2deg); }
+        to{ opacity:1; transform:translateY(0) rotate(0deg); }
+      }
+      .kartu.malam{ background:#1E3A8A; border-color:#172554; color:#EFF6FF; }
+      .kartu.malam .kartu-judul{ color:#fff; }
+      .kartu.malam .narasi{ color:#DBEAFE; }
+      .kartu.malam .pelapor{ color:#BFDBFE; }
+      .kartu-jenis{
+        display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700;
+        letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px;
+        background:var(--krem-2); color:var(--cokelat); margin-bottom:10px;
+      }
+      .kartu.malam .kartu-jenis{ background:#172554; color:#BFDBFE; }
+      .kartu-judul{ font-size:23px; font-weight:700; color:var(--cokelat); margin:0 0 6px; line-height:1.2; }
+      .pelapor{ display:flex; align-items:center; gap:6px; font-size:14px; font-weight:600; color:var(--biru); margin:0 0 10px; }
+      .kartu.malam .pelapor{ color:#93C5FD; }
+      .narasi{ font-size:16px; line-height:1.55; margin:0; }
+      .pilihan{ display:grid; gap:10px; margin-top:18px; }
+      .btn-pilihan{
+        width:100%; min-height:48px; padding:12px 14px; text-align:left;
+        background:var(--putih); border:2px solid var(--garis); border-radius:var(--radius-tombol);
+        font-size:15.5px; font-weight:600; color:var(--teks); line-height:1.4;
+        transition:border-color .15s ease, background-color .15s ease, transform .1s ease;
+      }
+      .btn-pilihan:hover{ border-color:var(--oren); background:var(--krem); }
+      .btn-pilihan:active{ transform:scale(.99); }
+      .kartu.malam .btn-pilihan{ background:#EFF6FF; border-color:#93C5FD; color:#172554; }
+      .kartu.malam .btn-pilihan:hover{ background:#fff; border-color:#fff; }
+
+      .stempel{
+        position:absolute; top:16px; right:14px; z-index:3;
+        font-family:"Outfit",sans-serif; font-weight:800; font-size:19px; letter-spacing:.08em;
+        padding:5px 12px; border:3.5px solid currentColor; border-radius:8px;
+        background:rgba(255,255,255,.88); transform:rotate(-12deg);
+        animation:cap .3s cubic-bezier(.2,2.2,.4,1) forwards; pointer-events:none;
+      }
+      .stempel.setuju{ color:var(--hijau); } .stempel.tolak{ color:var(--merah); }
+      .stempel.tunda{ color:var(--amber); } .stempel.catat{ color:var(--biru); }
+      @keyframes cap{
+        from{ opacity:0; transform:scale(2) rotate(-12deg); }
+        to{ opacity:1; transform:scale(1) rotate(-12deg); }
+      }
+      .delta-baris{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+      .delta{
+        display:inline-flex; align-items:center; gap:6px; font-weight:700; font-size:14px;
+        padding:6px 11px; border-radius:999px; border:2px solid; font-variant-numeric:tabular-nums;
+      }
+      .delta .ikon{ width:16px; height:16px; }
+      .delta.pos{ color:var(--hijau); border-color:#86EFAC; background:#F0FDF4; }
+      .delta.neg{ color:var(--merah); border-color:#FECACA; background:#FEF2F2; }
+      .delta.nol{ color:#6B7280; border-color:#E5E7EB; background:#F9FAFB; }
+      .kartu.malam .delta.pos{ background:#F0FDF4; } .kartu.malam .delta.neg{ background:#FEF2F2; } .kartu.malam .delta.nol{ background:#F9FAFB; }
+      .buka-pencapaian{
+        margin-top:12px; display:flex; gap:8px; align-items:center;
+        background:#FFFBEB; border:2px dashed var(--amber); color:#92400E;
+        border-radius:10px; padding:9px 12px; font-size:14px; font-weight:600;
+      }
+      .area-lanjut{ margin-top:16px; }
+
+      .toast{
+        position:fixed; left:50%; transform:translateX(-50%); bottom:18px; z-index:40;
+        width:calc(100% - 32px); max-width:448px; cursor:pointer;
+        background:var(--teks); color:#FFF7ED; border-radius:14px; padding:14px 16px;
+        font-size:15px; line-height:1.5; box-shadow:0 10px 28px rgba(67,20,7,.35);
+        animation:toastNaik .3s ease-out;
+      }
+      body.toast-aktif .app{ padding-bottom:170px; }
+      .toast .siapa{ display:block; font-family:"Outfit",sans-serif; font-weight:700; font-size:12.5px; letter-spacing:.05em; color:#FDBA74; margin-bottom:3px; text-transform:uppercase; }
+      @keyframes toastNaik{
+        from{ opacity:0; transform:translate(-50%,16px); }
+        to{ opacity:1; transform:translate(-50%,0); }
+      }
+
+      /* ---------- layar akhir ---------- */
+      .akhir{ text-align:center; padding-top:8px; }
+      .akhir .kotak{
+        background:var(--putih); border:2px solid var(--garis); border-radius:var(--radius-kartu);
+        padding:26px 20px; box-shadow:0 4px 0 rgba(154,52,18,.10);
+      }
+      .akhir h2{ font-size:30px; color:var(--cokelat); margin:10px 0 6px; }
+      .akhir .alasan{ font-size:16px; line-height:1.55; margin:0 auto; max-width:340px; }
+      .skor-besar{ font-family:"Outfit",sans-serif; font-size:58px; font-weight:800; color:var(--cokelat); line-height:1; margin:16px 0 2px; }
+      .skor-label{ font-size:13px; font-weight:700; letter-spacing:.06em; color:var(--teks-lembut); text-transform:uppercase; }
+      .peringkat{
+        display:inline-block; margin-top:12px; background:var(--oren); color:var(--teks);
+        font-family:"Outfit",sans-serif; font-weight:700; font-size:17px;
+        padding:8px 18px; border-radius:999px; border:2px solid var(--oren-tua);
+      }
+      .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px; text-align:left; }
+      .stat{ background:var(--krem); border:2px solid var(--krem-2); border-radius:12px; padding:10px 12px; }
+      .stat .k{ font-size:12.5px; font-weight:700; color:var(--teks-lembut); text-transform:uppercase; letter-spacing:.04em; }
+      .stat .v{ font-family:"Outfit",sans-serif; font-size:19px; font-weight:700; color:var(--teks); margin-top:2px; font-variant-numeric:tabular-nums; }
+      .akhir-baru{ margin-top:16px; text-align:left; }
+      .akhir-baru h3{ font-size:16px; color:var(--cokelat); margin:0 0 8px; }
+      .confetti-layer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:60; }
+      .confetti{ position:absolute; top:-16px; border-radius:2px; animation:jatoh linear forwards; }
+      @keyframes jatoh{
+        to{ transform:translateY(105vh) rotate(720deg); }
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        *,*::before,*::after{ animation:none !important; transition:none !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+
+      <!-- ============ MENU ============ -->
+      <section id="layar-menu" aria-label="Menu utama">
+        <div class="menu-atas">
+          <span class="lencana">
+            <svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.5 5.3 5.5.7-4 4 1 5.7-5-2.7-5 2.7 1-5.7-4-4 5.5-.7z"/></svg>
+            RT 05
+          </span>
+          <button class="btn-kecil" id="btn-suara-menu" type="button" aria-label="Matikan atau nyalakan suara"></button>
+        </div>
+
+        <div class="poster">
+          <h1 class="judul-besar">PAK RT!</h1>
+          <p class="subjudul">Simulasi Jadi Ketua RT</p>
+          <hr class="putus" style="margin:12px 0;" />
+          <ul class="cara-main">
+            <li><span class="no">1</span><span>Kamu baru terpilih jadi Ketua RT 05. Bertahanlah selama <strong>30 hari</strong> penuh.</span></li>
+            <li><span class="no">2</span><span>Tiap hari ada kejadian dari warga. Pilih keputusanmu — efeknya ke <strong>Kas, Kerukunan, dan Reputasi</strong> baru kelihatan setelah memilih.</span></li>
+            <li><span class="no">3</span><span>Jangan sampai kas minus, Kerukunan habis, atau Reputasi nol. Salah satu kejadian, jabatanmu tamat.</span></li>
+          </ul>
+          <div>
+            <span class="skor-terbaik" id="skor-terbaik">Skor Terbaik: —</span>
+          </div>
+        </div>
+
+        <div class="menu-tombol">
+          <button class="btn btn-primer" id="btn-mulai" type="button">Mulai Menjabat</button>
+          <button class="btn btn-sekunder" id="btn-lanjut" type="button" hidden>Lanjutkan Jabatan</button>
+        </div>
+
+        <h2 class="seksi-judul">Pencapaian</h2>
+        <div class="galeri" id="galeri-pencapaian"></div>
+
+        <h2 class="seksi-judul">Riwayat Jabatan</h2>
+        <div id="riwayat-wadah"></div>
+      </section>
+
+      <!-- ============ MAIN ============ -->
+      <section id="layar-main" hidden aria-label="Layar bermain">
+        <div class="kepala-main">
+          <span class="hari-label" id="label-hari">Hari 1 / 30</span>
+          <div class="kepala-kanan">
+            <span class="lencana">RT 05</span>
+            <button class="btn-kecil" id="btn-suara-main" type="button" aria-label="Matikan atau nyalakan suara"></button>
+          </div>
+        </div>
+
+        <div class="strip-hari" id="strip-hari" aria-hidden="true"></div>
+
+        <div class="meter-bungkus">
+          <div class="meter" id="meter-kas">
+            <div class="baris">
+              <span class="nama"><svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2"/><path d="M3 7v10a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2z"/><circle cx="16.5" cy="14" r="1.3" fill="currentColor" stroke="none"/></svg>Kas RT</span>
+              <span class="nilai" id="nilai-kas">Rp 500.000</span>
+            </div>
+            <div class="rel"><div class="isi isi-kas" id="isi-kas" style="width:50%"></div></div>
+          </div>
+          <div class="meter" id="meter-rukun">
+            <div class="baris">
+              <span class="nama"><svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.7C6.4 17 3 13.6 3 9.6 3 7 5 5 7.5 5c1.7 0 3.4.9 4.5 2.4C13.1 5.9 14.8 5 16.5 5 19 5 21 7 21 9.6c0 4-3.4 7.4-9 11.1z"/></svg>Kerukunan</span>
+              <span class="nilai" id="nilai-rukun">70</span>
+            </div>
+            <div class="rel"><div class="isi isi-rukun" id="isi-rukun" style="width:70%"></div></div>
+          </div>
+          <div class="meter" id="meter-rep">
+            <div class="baris">
+              <span class="nama"><svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 8.1-7 10-4-1.9-7-5.4-7-10V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>Reputasi</span>
+              <span class="nilai" id="nilai-rep">70</span>
+            </div>
+            <div class="rel"><div class="isi isi-rep" id="isi-rep" style="width:70%"></div></div>
+          </div>
+        </div>
+
+        <div id="kartu-wadah"></div>
+        <div class="area-lanjut" id="area-lanjut"></div>
+      </section>
+
+      <!-- ============ AKHIR ============ -->
+      <section id="layar-akhir" hidden aria-label="Layar akhir">
+        <div class="akhir"><div class="kotak" id="akhir-kotak"></div></div>
+        <div class="menu-tombol">
+          <button class="btn btn-primer" id="btn-lagi" type="button">Main Lagi</button>
+          <button class="btn btn-sekunder" id="btn-menu" type="button">Menu Utama</button>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <div class="confetti-layer" id="confetti-layer" aria-hidden="true"></div>
+
+    <script>
+    "use strict";
+    /* ================= IKON SVG ================= */
+    var IKON = {
+      dompet: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v2"/><path d="M3 7v10a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1H5a2 2 0 0 1-2-2z"/><circle cx="16.5" cy="14" r="1.3" fill="currentColor" stroke="none"/></svg>',
+      hati: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.7C6.4 17 3 13.6 3 9.6 3 7 5 5 7.5 5c1.7 0 3.4.9 4.5 2.4C13.1 5.9 14.8 5 16.5 5 19 5 21 7 21 9.6c0 4-3.4 7.4-9 11.1z"/></svg>',
+      lencana: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.6-3 8.1-7 10-4-1.9-7-5.4-7-10V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></svg>',
+      bulan: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13.5A8.5 8.5 0 1 1 10.5 4 6.8 6.8 0 0 0 20 13.5z"/></svg>',
+      palu: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4.5l5 5L21 8a2.1 2.1 0 0 0-3-3l-1.5 1.5-2-2z"/><path d="M13 6L4.5 14.5a2.1 2.1 0 0 0 3 3L16 9"/><path d="M12.5 3.5l8 8"/></svg>',
+      kalender: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+      gembok: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>',
+      cek: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5L19.5 7"/></svg>',
+      suaraOn: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9.5a4 4 0 0 1 0 5M18 7a7.5 7.5 0 0 1 0 10"/></svg>',
+      suaraOff: '<svg class="ikon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></svg>'
+    };
+
+    /* ================= DATA KARTU (persis dari naskah) ================= */
+    function P(t, kas, ruk, rep, stamp, react, tegas){ return { t:t, kas:kas, ruk:ruk, rep:rep, stamp:stamp, react:react, tegas:!!tegas }; }
+    function K(id, jenis, judul, warga, narasi, pilihan){ return { id:id, jenis:jenis, judul:judul, warga:warga, narasi:narasi, pilihan:pilihan }; }
+
+    var HARIAN = [
+      K('d1','harian','Ayam Bu Siti','Bu Siti','Ayam Bu Siti berak di halaman Pak Budi tiap pagi. Pak Budi datang sambil bawa sapu, mukanya sudah merah.',[
+        P('Tegur Bu Siti baik-baik',0,5,3,'DISETUJUI','Bu Siti janji kandangin ayamnya. Pak Budi senyum lega.'),
+        P('Suruh Pak Budi sabar saja',0,-8,-3,'DITOLAK','Pak Budi ngedumel di grup RT semalaman.'),
+        P('Bikinkan kandang dari kas RT',-75000,10,5,'DISETUJUI','Ayam aman, warga senang. Bu Siti kirim pisang goreng.')]),
+      K('d2','harian','Pohon Mangga','Pak Karto','Mangga Pak Karto jatuh ke atap rumah Pak Usman. Sudah tiga genteng pecah, dan keduanya saling tuduh.',[
+        P('Bagi dua hasil mangganya',0,8,4,'DISETUJUI','Mereka sepakat. Minggu depan panen bareng.'),
+        P('Tebang saja pohonnya',-100000,-5,-5,'DITOLAK','Pak Karto murung seminggu. Mangga tinggal kenangan.'),
+        P('Biarin, urusan mereka',0,-10,-6,'DITUNDA','Ributnya makin jadi. Grup RT ikut panas.')]),
+      K('d3','harian','Hajatan Sampai Jam 2 Pagi','Bu Ratna','Bu Ratna hajatan, musik dangdutnya kencang sampai jam 2 pagi. Tiga warga sudah lapor tidak bisa tidur.',[
+        P('Datangi, minta kecilkan volume',0,5,5,'DISETUJUI','Bu Ratna minta maaf, volume diturunin.'),
+        P('Biarkan, namanya juga hajatan',0,-8,-4,'DITUNDA','Tiga warga lapor tidak bisa tidur. Lagi.'),
+        P('Tegur keras + denda sosial',0,-5,8,'DITOLAK','Bu Ratna kapok. Warga lain jadi segan hajatan berisik.',true)]),
+      K('d4','harian','Iuran Nunggak','Pak Jono',"Pak Jono belum bayar iuran 3 bulan. Total Rp 60.000. Bendahara sudah tiga kali nagih, selalu dijawab 'besok'.",[
+        P('Tagih baik-baik ke rumahnya',60000,2,3,'DISETUJUI','Pak Jono bayar sambil senyum kecut.'),
+        P('Umumkan di grup RT',60000,-12,-5,'DITOLAK','Pak Jono bayar, tapi malu. Grup RT jadi canggung.',true),
+        P('Tombokin dulu dari kas',-60000,6,2,'DISETUJUI','Pak Jono berterima kasih. Janji bayar bulan depan.')]),
+      K('d5','harian','Surat Pengantar Jam 9 Malam','Mbak Rina','Mbak Rina minta surat pengantar KTP jam 9 malam. Besok pagi dia harus sudah di kelurahan.',[
+        P('Buatkan sekarang juga',0,3,6,'DISETUJUI','Mbak Rina bilang Pak RT paling gercep se-RW.'),
+        P('Suruh datang besok pagi',0,-2,-4,'DITUNDA','Mbak Rina telat ke kelurahan. Dia cerita ke tetangga.'),
+        P('Minta uang rokok dulu',20000,-5,-12,'DITOLAK','Mbak Rina cerita ke tetangga. Reputasi Pak RT anjlok.')]),
+      K('d6','harian','Ronda Kosong','Seksi Keamanan','Jadwal ronda malam ini kosong. Dua warga yang kebagian jaga mendadak kabur dengan alasan masing-masing.',[
+        P('Pak RT ronda sendiri',0,5,8,'DISETUJUI','Warga salut. Besok jadwal ronda penuh lagi.'),
+        P('Paksa yang kabur balik jaga',0,-6,3,'DITOLAK','Mereka balik, tapi sambil ngedumel.'),
+        P('Biarin kosong semalam',0,0,-8,'DITUNDA','Pos ronda gelap gulita semalaman.')]),
+      K('d7','harian','Sampah Menumpuk','Bu Ani','TPS penuh, sampah berserakan sampai ke jalan. Lalat mulai pesta, warga mulai protes.',[
+        P('Kerja bakti dadakan besok',-50000,8,6,'DISETUJUI','TPS bersih lagi. Warga yang ikut dapat makan siang.'),
+        P('Lapor ke kelurahan',0,0,2,'DITUNDA','Jawaban kelurahan: minggu depan.'),
+        P('Biarin dulu, nanti juga diangkut',0,-8,-6,'DITUNDA','Sampah makin numpuk. Baunya sampai ke gang sebelah.')]),
+      K('d8','harian','Bola Pecahkan Kaca','Anak-anak gang','Anak-anak main bola sampai pecahkan kaca jendela Bu Ani. Bu Ani minta ganti, anak-anak ketakutan.',[
+        P('Mediasi: minta maaf + ganti patungan',-30000,8,5,'DISETUJUI','Kaca diganti, anak-anak janji main di lapangan.'),
+        P('Larang main bola di gang',0,-10,-3,'DITOLAK','Anak-anak murung. Orang tuanya protes.'),
+        P('Suruh orang tua ganti penuh',0,-4,2,'DITOLAK','Orang tua bayar, tapi sebal.')]),
+      K('d9','harian','Motor Nutupin Jalan','Mas Dodi','Motor Mas Dodi parkir nutupin jalan masuk gang. Mobil Pak RT tidak bisa keluar.',[
+        P('Tegur langsung, minta pindah',0,4,4,'DISETUJUI','Mas Dodi pindah sambil minta maaf.'),
+        P('Pasang pengumuman larangan parkir',-25000,3,3,'DISETUJUI','Pengumuman dipasang. Gang jadi tertib.'),
+        P('Derek sendiri motornya',0,-15,-10,'DITOLAK','Mas Dodi ngamuk. Satu gang ikut ribut.',true)]),
+      K('d10','harian','Posyandu Bulan Ini','Bu Bidan','Bu Bidan minta bantuan posyandu bulan ini: tempat, konsumsi, dan tenaga bantu.',[
+        P('Bantu + sediakan konsumsi',-80000,6,8,'DISETUJUI','Posyandu lancar. Ibu-ibu senang.'),
+        P('Bantu seadanya',0,0,3,'DISETUJUI','Posyandu jalan, meski seadanya.'),
+        P('Tolak, kas lagi tipis',0,-3,-6,'DITOLAK','Bu Bidan kecewa. Posyandu pindah ke RT sebelah.')]),
+      K('d11','harian','Lampu Jalan Mati','Pak Slamet','Tiga lampu jalan mati, gang jadi gelap gulita. Warga takut pulang malam.',[
+        P('Perbaiki dari kas RT',-120000,8,8,'DISETUJUI','Gang terang lagi. Warga merasa aman.'),
+        P('Iuran dadakan per rumah',90000,-6,-2,'DISETUJUI','Lampu nyala, tapi ada warga yang protes iuran dadakan.'),
+        P('Lapor PLN, tunggu',0,0,-3,'DITUNDA','Gang gelap empat hari. PLN datangnya lama.')]),
+      K('d12','harian','Kerja Bakti Sepi','Seksi Kebersihan','Kerja bakti Minggu pagi, yang datang cuma 4 warga. Yang lain pura-pura tidak dengar pengumuman.',[
+        P('Tetap jalan, yang datang dikasih makan',-60000,10,6,'DISETUJUI','Yang datang senang. Minggu depan yang ikut nambah.'),
+        P('Batalkan, percuma',0,-6,-5,'DITOLAK','Gang tetap kotor. Warga makin malas.'),
+        P('Denda yang tidak datang',40000,-12,-4,'DITOLAK','Kas nambah, tapi warga sebal.',true)]),
+      K('d13','harian','Tamu Nginap Tiga Hari','Pak Budi','Pak Budi lapor ada tamu nginap tiga hari di rumah kontrakan sebelah. Belum lapor ke RT.',[
+        P('Data + minta lapor 1x24 jam',0,2,5,'DISETUJUI','Tamu didata. Semua tenang.'),
+        P('Usir tamunya',0,-10,-8,'DITOLAK','Kontrakan ribut. Pemilik rumah protes keras.'),
+        P('Biarin, bukan urusan RT',0,0,-5,'DITUNDA','Warga bertanya-tanya: RT-nya ke mana?')]),
+      K('d14','harian','Karaoke Tiap Malam Jumat','Pak Slamet','Pak Slamet karaoke tiap malam Jumat sampai tengah malam. Suaranya kalahkan azan subuh.',[
+        P('Buat aturan jam malam karaoke',0,6,6,'DISETUJUI','Aturan disepakati: karaoke maks jam 10 malam.'),
+        P('Ikut nyanyi biar akrab',0,8,-2,'DISETUJUI','Warga ketawa, tapi ada yang protes Pak RT ikut-ikutan.'),
+        P('Tegur keras',0,-6,4,'DITOLAK','Pak Slamet kapok. Tetangga sebelah lega.',true)]),
+      K('d15','harian','Kucing Beranak di Pos Ronda','Warga pos ronda','Kucing liar beranak di pos ronda. Anak-anaknya lima, lucu-lucu, dan sekarang pos jadi kandang.',[
+        P('Adopsi bareng warga, kasih makan',-20000,8,4,'DISETUJUI','Kucing jadi maskot pos ronda.'),
+        P('Buang jauh-jauh',0,-8,-4,'DITOLAK','Ibu-ibu protes. Kucingnya kasihan.'),
+        P('Biarin di pos',0,-2,0,'DITUNDA','Pos ronda bau kucing seminggu.')]),
+      K('d16','harian','Dana 17 Agustusan','Karang Taruna','Karang taruna minta dana lomba 17-an: balap karung, panjat pinang, dan makan kerupuk.',[
+        P('Kasih Rp 200.000',-200000,10,8,'DISETUJUI','Lomba meriah. RT 05 juara umum tingkat RW.'),
+        P('Kasih Rp 50.000 seadanya',-50000,3,2,'DISETUJUI','Lomba jalan, meski hadiahnya seadanya.'),
+        P('Tolak, suruh cari sponsor',0,-8,-5,'DITOLAK','Karang taruna kecewa. 17-an jadi sepi.')]),
+      K('d17','harian','Air PAM Mati','Bu Dewi','Air PAM mati dua hari. Warga antre di sumur Pak Haji, embernya sudah antre dari subuh.',[
+        P('Beli air galon darurat dari kas',-150000,10,8,'DISETUJUI','Warga tidak kehausan. Pak RT dipuji di grup.'),
+        P('Koordinir antrean biar tertib',0,5,5,'DISETUJUI','Antrean tertib. Tidak ada yang ribut.'),
+        P('Suruh warga sabar',0,-10,-8,'DITUNDA','Warga ngomel. Sumur Pak Haji hampir kering.')]),
+      K('d18','harian','Jualan Nutupin Trotoar','Bu Yati','Bu Yati jualan gorengan sampai nutupin trotoar. Pejalan kaki terpaksa jalan di jalan raya.',[
+        P('Atur lapak biar tidak nutup jalan',0,6,5,'DISETUJUI','Lapak rapi, gorengan tetap laris.'),
+        P('Larang jualan',0,-10,-6,'DITOLAK','Bu Yati nangis. Warga kasihan.'),
+        P('Biarin, kasihan cari makan',0,-2,-3,'DITUNDA','Trotoar tetap ketutup. Pejalan kaki protes.')]),
+      K('d19','harian','Anak Belum Pulang Main','Bu Dewi','Anak Bu Dewi belum pulang main sampai magrib. Bu Dewi sudah panik, suaranya gemetar.',[
+        P('Kerahan warga cari bareng',0,10,8,'DISETUJUI','Ketemu di warung main PS. Bu Dewi lega bukan main.'),
+        P('Tunggu saja, nanti pulang',0,-8,-10,'DITUNDA','Bu Dewi menangis di pos ronda.'),
+        P('Lapor polisi langsung',0,-3,2,'DITUNDA','Polisi datang, anaknya ketemu sendiri di warung.')]),
+      K('d20','harian','Renovasi Berdebu','Pak Anton','Pak Anton renovasi rumah, debu dan suara berisiknya sampai ke tetangga. Bu Sari sudah dua kali protes.',[
+        P('Mediasi jam kerja renovasi',0,6,5,'DISETUJUI','Disepakati: renovasi jam 8 pagi sampai 5 sore.'),
+        P('Suruh berhenti total',0,-8,-4,'DITOLAK','Pak Anton rugi. Tukangnya menganggur.'),
+        P('Minta ganti rugi ke tetangga',50000,-6,-2,'DITOLAK','Tetangga dapat ganti rugi, tapi hubungannya retak.')]),
+      K('d21','harian','Arisan Ibu-Ibu','Bu Ratna','Ibu-ibu minta RT fasilitasi arisan bulanan: tempat kumpul dan jadwal giliran.',[
+        P('Fasilitasi, sediakan tempat',0,8,5,'DISETUJUI','Arisan jalan. Ibu-ibu makin kompak.'),
+        P('Tolak, bukan urusan RT',0,-6,-3,'DITOLAK','Ibu-ibu kecewa. Arisan pindah ke RT sebelah.'),
+        P('Fasilitasi + ikut iuran',-50000,10,6,'DISETUJUI','Pak RT ikut arisan. Ibu-ibu makin sayang Pak RT.')]),
+      K('d22','harian','Ribut Anak Muda','Warga lapangan','Dua kelompok anak muda ribut di lapangan. Ada yang sudah bawa balok.',[
+        P('Lerai langsung + panggil orang tua',0,8,8,'DISETUJUI','Ribut bubar. Orang tua mereka berterima kasih.'),
+        P('Panggil polisi',0,-5,3,'DITOLAK','Polisi datang, anak-anak kabur. Warga ketakutan.'),
+        P('Biarin, nanti capek sendiri',0,-12,-10,'DITUNDA','Ribut makin besar. Satu warga kena lempar batu.')]),
+      K('d23','harian','Got Mampet','Pak Haji','Got mampet, air meluap ke jalan tiap hujan. Nyamuk mulai banyak.',[
+        P('Kerja bakti bersihin got',-40000,8,6,'DISETUJUI','Got bersih. Air mengalir lancar lagi.'),
+        P('Panggil tukang dari kas',-100000,4,4,'DISETUJUI','Got bersih, tapi kas terkuras.'),
+        P('Biarin, nanti surut sendiri',0,-8,-6,'DITUNDA','Jalan tetap banjir tiap hujan.')]),
+      K('d24','harian','Keluarga Baru Pindah','Keluarga baru','Keluarga baru pindah ke ujung gang. Belum kenal siapa-siapa, anaknya pemalu.',[
+        P('Sambut + bantu kenalan',0,8,6,'DISETUJUI','Keluarga baru langsung betah. Anaknya ikut main bola.'),
+        P('Minta data KK dulu, formal',0,-2,3,'DISETUJUI','Data lengkap, tapi mereka merasa diinterogasi.'),
+        P('Cuekin saja',0,-6,-4,'DITUNDA','Keluarga baru merasa tidak diterima.')]),
+      K('d25','harian','Donasi Korban Banjir','Pak RW','RW minta donasi untuk korban banjir di kelurahan sebelah. Semua RT diminta ikut.',[
+        P('Kumpulkan Rp 300.000 dari kas',-300000,6,10,'DISETUJUI','RW memuji RT 05 di rapat. Warga bangga.'),
+        P('Kumpulkan seikhlasnya warga',50000,5,5,'DISETUJUI','Terkumpul dari warga. Semua ikut andil.'),
+        P('Tolak, kas RT untuk RT sendiri',0,-6,-10,'DITOLAK','RW kecewa. RT 05 dicap pelit.')]),
+      K('d26','harian','Lomba Kebersihan Antar-RT','Pak RW','Lomba kebersihan antar-RT, RW menilai minggu depan. Pemenang dapat piala + dana pembinaan.',[
+        P('Gas kerja bakti besar-besaran',-100000,8,10,'DISETUJUI','Gang kinclong. Juri RW terkesan.'),
+        P('Bersih-bersih seadanya',0,2,3,'DISETUJUI','Gang lumayan bersih. Juri biasa saja.'),
+        P('Tidak usah ikut',0,-3,-8,'DITOLAK','RT 05 jadi satu-satunya yang tidak ikut.')]),
+      K('d27','harian','Mobil Tamu Parkir Semalaman','Bu Sari','Mobil tamu parkir di depan rumah Bu Sari semalaman. Bu Sari tidak bisa keluarkan motornya.',[
+        P('Tegur pemilik mobil',0,5,4,'DISETUJUI','Pemilik mobil minta maaf, langsung pindah.'),
+        P('Pasang portal + kunci',-80000,4,5,'DISETUJUI','Portal dipasang. Parkir liar berkurang.'),
+        P('Biarin, cuma semalam',0,-4,-2,'DITUNDA','Bu Sari sebal. Besok mobil itu parkir lagi.')]),
+      K('d28','harian','Lahiran Tengah Malam','Pak Budi','Bu Sari mau lahiran, suaminya minta bantuan antar ke RS tengah malam. Taksi tidak ada yang mau.',[
+        P('Antar pakai mobil Pak RT',0,8,10,'DISETUJUI','Bayinya lahir sehat. Warga heboh di grup RT.'),
+        P('Panggilkan ojek online',0,2,3,'DISETUJUI','Ojek datang. Sampai RS tepat waktu.'),
+        P('Suruh tunggu pagi',0,-10,-15,'DITOLAK','Keluarga Bu Sari kecewa berat.')]),
+      K('d29','harian','Wifi Pos Ronda','Anak muda gang','Anak muda minta wifi di pos ronda biar betah ronda. Katanya biar tidak ngantuk.',[
+        P('Pasang wifi dari kas RT',-150000,10,5,'DISETUJUI','Pos ronda ramai. Ronda jadi rajin.'),
+        P('Tolak, ronda bukan nongkrong',0,-8,-3,'DITOLAK','Anak muda kecewa. Ronda tetap sepi.'),
+        P('Patungan, RT bayar separuh',-75000,6,4,'DISETUJUI','Wifi terpasang. Anak muda ikut iuran.')]),
+      K('d30','harian','Duka Warga','Keluarga almarhum','Warga ujung gang meninggal dunia. Keluarga minta bantuan tenda, kursi, dan konsumsi untuk tahlilan.',[
+        P('Siapkan tenda + kursi + konsumsi dari kas',-200000,10,10,'DISETUJUI','Tahlilan lancar. Keluarga berterima kasih.'),
+        P('Pinjamkan tenda saja',0,5,4,'DISETUJUI','Tenda terpasang. Keluarga mengurus sisanya.'),
+        P('Suruh sewa sendiri',0,-12,-10,'DITOLAK','Keluarga kecewa. Warga ikut mencibir.')])
+    ];
+
+    var MALAM = [
+      K('n1','malam','Maling Kepergok','Warga ujung gang','Jam 2 pagi, warga lapor ada maling di rumah kosong ujung gang.',[
+        P('Bangunkan ronda + kejar bareng',0,6,8,'DISETUJUI','Maling kabur, motornya ketinggalan.'),
+        P('Telepon polisi, tunggu di pos',0,0,4,'DISETUJUI','Polisi datang 30 menit kemudian.'),
+        P('Pura-pura tidur',0,-8,-12,'DITOLAK','Rumah kosong dibobol. Warga kecewa.')]),
+      K('n2','malam','Banjir Dadakan','Bu Ani','Hujan deras, air naik sampai mata kaki di gang bawah.',[
+        P('Bangunkan warga, ungsikan barang',0,10,8,'DISETUJUI','Barang aman. Warga kompak gotong royong.'),
+        P('Pantau dari rumah',0,-6,-5,'DITUNDA','Air masuk ke tiga rumah.'),
+        P('Buka pintu air + kerja bakti pagi',-50000,6,6,'DISETUJUI','Air surut pagi harinya.')]),
+      K('n3','malam','Listrik Mati Se-RT','Warga','Listrik se-RT mati. Grup RT panik, anak-anak ketakutan.',[
+        P('Cek gardu + lapor PLN cepat',0,4,6,'DISETUJUI','PLN datang satu jam kemudian.'),
+        P('Nyalakan genset pos ronda',-60000,8,6,'DISETUJUI','Pos ronda terang. Warga numpang cas HP.'),
+        P('Tidur saja, besok nyala sendiri',0,-6,-6,'DITUNDA','Listrik nyala subuh. Warga begadang gelap-gelapan.')])
+    ];
+
+    var BAKTI = K('bakti','bakti','Kerja Bakti Besar','Seksi Kebersihan','Hari ini kerja bakti besar: bersihin selokan dan cat ulang pos ronda. Warga menunggu komando Pak RT.',[
+      P('Ikut terjun langsung',0,10,8,'DISETUJUI','Pak RT ikut angkat cangkul. Warga salut.'),
+      P('Kirim konsumsi + bayar tukang',-80000,6,5,'DISETUJUI','Kerja bakti jalan, warga kenyang.'),
+      P('Pura-pura ada urusan',0,-8,-8,'DITOLAK','Warga tahu Pak RT di rumah saja.')]);
+
+    var IURAN = { id:'iuran', jenis:'iuran', judul:'Laporan Iuran Mingguan', warga:'Bendahara RT',
+      narasi:'Iuran warga minggu ini sudah terkumpul rapi dan dicatat bendahara. Total yang masuk ke kas RT sebesar Rp 150.000.' };
+
+    var PENCAPAIAN = [
+      { id:'tegas', nama:'Tangan Besi', desc:'Pilih 5 keputusan bernada tegas dalam satu masa jabatan.', ikon:'palu' },
+      { id:'bendahara', nama:'Bendahara Jujur', desc:'Tamat dengan Kas RT minimal Rp 1.000.000.', ikon:'dompet' },
+      { id:'damai', nama:'Damai Selalu', desc:'Tamat dengan Kerukunan penuh 100.', ikon:'hati' },
+      { id:'penuh', nama:'30 Hari Penuh', desc:'Selesaikan masa jabatan 30 hari sampai tamat.', ikon:'kalender' },
+      { id:'siaga', nama:'Siaga Malam', desc:'Selesaikan 2 kejadian malam dalam satu masa jabatan.', ikon:'bulan' },
+      { id:'lurah', nama:'Lurah Pun Sungkan', desc:'Tamat dengan Reputasi penuh 100.', ikon:'lencana' }
+    ];
+
+    /* ================= PENYIMPANAN ================= */
+    var K_SAVE='pakrt_save_v1', K_BEST='pakrt_best_v1', K_HIST='pakrt_history_v1', K_ACH='pakrt_ach_v1', K_SOUND='pakrt_sound_v1';
+    function lsGet(k, def){ try{ var v=localStorage.getItem(k); return v===null?def:JSON.parse(v); }catch(e){ return def; } }
+    function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+    function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+    /* ================= SUARA ================= */
+    var suaraNyala = lsGet(K_SOUND, true) !== false;
+    var actx = null;
+    function nada(freq, dur, tunda){
+      if(!suaraNyala) return;
+      try{
+        if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+        if(actx.state==='suspended') actx.resume();
+        var t = actx.currentTime + (tunda||0);
+        var o = actx.createOscillator(), g = actx.createGain();
+        o.type='sine'; o.frequency.value=freq;
+        g.gain.setValueAtTime(0.16, t);
+        g.gain.exponentialRampToValueAtTime(0.001, t+dur);
+        o.connect(g); g.connect(actx.destination);
+        o.start(t); o.stop(t+dur+0.02);
+      }catch(e){}
+    }
+    function bunyiPilih(){ nada(660, 0.07, 0); }
+    function bunyiBuruk(){ nada(180, 0.16, 0.05); }
+    function bunyiMenang(){ nada(523,0.14,0); nada(659,0.14,0.15); nada(784,0.24,0.30); }
+
+    /* ================= STATUS GAME ================= */
+    var S = null;
+    function acak(arr){
+      var a = arr.slice();
+      for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=a[i]; a[i]=a[j]; a[j]=tmp; }
+      return a;
+    }
+    function kartuById(id){
+      var semua = HARIAN.concat(MALAM);
+      for(var i=0;i<semua.length;i++) if(semua[i].id===id) return semua[i];
+      if(id==='bakti') return BAKTI;
+      return null;
+    }
+    function runBaru(){
+      S = {
+        hari:1, kas:500000, rukun:70, rep:70,
+        dek: acak(HARIAN.map(function(k){return k.id;})),
+        dekMalam: acak(MALAM.map(function(k){return k.id;})),
+        idxMalam:0, tegas:0, malamSelesai:0, keputusan:0,
+        antre:[], kini:null, malamMenunggu:false, baruBuka:[]
+      };
+      mulaiHari();
+    }
+    function simpanRun(){
+      if(!S) return;
+      lsSet(K_SAVE, { hari:S.hari, kas:S.kas, rukun:S.rukun, rep:S.rep, dek:S.dek, dekMalam:S.dekMalam,
+        idxMalam:S.idxMalam, tegas:S.tegas, malamSelesai:S.malamSelesai, keputusan:S.keputusan });
+    }
+    function muatRun(){
+      var d = lsGet(K_SAVE, null);
+      if(!d || !d.dek) return false;
+      S = { hari:d.hari, kas:d.kas, rukun:d.rukun, rep:d.rep, dek:d.dek, dekMalam:d.dekMalam,
+        idxMalam:d.idxMalam, tegas:d.tegas, malamSelesai:d.malamSelesai, keputusan:d.keputusan,
+        antre:[], kini:null, malamMenunggu:false, baruBuka:[] };
+      mulaiHari();
+      return true;
+    }
+    function mulaiHari(){
+      S.antre = [];
+      if(S.hari===7 || S.hari===14 || S.hari===21 || S.hari===28) S.antre.push(IURAN);
+      if(S.hari===15) S.antre.push(BAKTI);
+      S.antre.push(kartuById(S.dek[S.hari-1]));
+      S.malamMenunggu = false;
+      kartuBerikut();
+    }
+    function kartuBerikut(){
+      S.kini = S.antre.shift();
+      gambarKartu();
+    }
+
+    /* ================= FORMAT ================= */
+    var fmtRp = new Intl.NumberFormat('id-ID');
+    function rp(n){ return 'Rp ' + fmtRp.format(n); }
+    function rpDelta(n){ return (n>0?'+':(n<0?'-':'')) + 'Rp ' + fmtRp.format(Math.abs(n)); }
+    function poinDelta(n){ return (n>0?'+':'') + n; }
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    /* ================= RENDER: METER & STRIP ================= */
+    var $ = function(id){ return document.getElementById(id); };
+    function gambarMeter(){
+      $('label-hari').textContent = 'Hari ' + S.hari + ' / 30';
+      $('nilai-kas').textContent = rp(S.kas);
+      $('nilai-rukun').textContent = S.rukun;
+      $('nilai-rep').textContent = S.rep;
+      $('isi-kas').style.width = Math.max(0, Math.min(100, S.kas/1000000*100)) + '%';
+      $('isi-rukun').style.width = S.rukun + '%';
+      $('isi-rep').style.width = S.rep + '%';
+      $('meter-kas').classList.toggle('kritis', S.kas < 100000);
+      $('meter-rukun').classList.toggle('kritis', S.rukun < 25);
+      $('meter-rep').classList.toggle('kritis', S.rep < 25);
+      var strip = '';
+      for(var i=1;i<=30;i++){
+        var cls = i < S.hari ? 'lewat' : (i === S.hari ? 'kini' : '');
+        strip += '<span class="' + cls + '">' + i + '</span>';
+      }
+      $('strip-hari').innerHTML = strip;
+    }
+
+    /* ================= RENDER: KARTU ================= */
+    function labelJenis(k){
+      if(k.jenis==='malam') return IKON.bulan + ' Kejadian Malam';
+      if(k.jenis==='iuran') return IKON.dompet + ' Laporan Mingguan';
+      if(k.jenis==='bakti') return IKON.palu + ' Kerja Bakti Hari ke-15';
+      return IKON.kalender + ' Kejadian Hari Ini';
+    }
+    function gambarKartu(){
+      gambarMeter();
+      sembunyiToast();
+      $('area-lanjut').innerHTML = '';
+      var k = S.kini;
+      var html = '<article class="kartu' + (k.jenis==='malam' ? ' malam' : '') + '">';
+      html += '<span class="kartu-jenis">' + labelJenis(k) + '</span>';
+      html += '<h2 class="kartu-judul">' + esc(k.judul) + '</h2>';
+      html += '<p class="pelapor">' + esc(k.warga) + '</p>';
+      html += '<p class="narasi">' + esc(k.narasi) + '</p>';
+      html += '<div id="kartu-isi">';
+      if(k.jenis==='iuran'){
+        html += '<div class="pilihan"><button class="btn btn-primer" id="btn-iuran" type="button">Terima, catat di buku kas</button></div>';
+      } else {
+        html += '<div class="pilihan" role="group" aria-label="Pilihan keputusan">';
+        k.pilihan.forEach(function(p, i){
+          html += '<button class="btn-pilihan" type="button" data-pilih="' + i + '">' + esc(p.t) + '</button>';
+        });
+        html += '</div>';
+      }
+      html += '</div></article>';
+      $('kartu-wadah').innerHTML = html;
+
+      if(k.jenis==='iuran'){
+        $('btn-iuran').addEventListener('click', terimaIuran);
+      } else {
+        var tombol = document.querySelectorAll('[data-pilih]');
+        tombol.forEach(function(b){
+          b.addEventListener('click', function(){ pilihKeputusan(parseInt(b.getAttribute('data-pilih'),10)); });
+        });
+      }
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+
+    function kelasStempel(s){
+      if(s==='DISETUJUI') return 'setuju';
+      if(s==='DITOLAK') return 'tolak';
+      if(s==='DITUNDA') return 'tunda';
+      return 'catat';
+    }
+    function deltaHTML(dk, dr, dp){
+      function chip(ikon, teks, nilai){
+        var cls = nilai>0 ? 'pos' : (nilai<0 ? 'neg' : 'nol');
+        return '<span class="delta ' + cls + '">' + ikon + teks + '</span>';
+      }
+      return '<div class="delta-baris">'
+        + chip(IKON.dompet, rpDelta(dk), dk)
+        + chip(IKON.hati, 'Kerukunan ' + poinDelta(dr), dr)
+        + chip(IKON.lencana, 'Reputasi ' + poinDelta(dp), dp)
+        + '</div>';
+    }
+    function tampilHasil(stamp, dk, dr, dp, reaksi, warga, bukaBaru){
+      var kartu = document.querySelector('.kartu');
+      var isi = $('kartu-isi');
+      var html = '';
+      if(stamp) html += '';
+      isi.innerHTML = deltaHTML(dk, dr, dp) + (bukaBaru && bukaBaru.length
+        ? '<div class="buka-pencapaian">' + IKON.cek + '<span>Pencapaian terbuka: <strong>' + esc(bukaBaru.join(', ')) + '</strong></span></div>' : '');
+      if(stamp && kartu){
+        var st = document.createElement('div');
+        st.className = 'stempel ' + kelasStempel(stamp);
+        st.textContent = stamp;
+        kartu.appendChild(st);
+      }
+      gambarMeter();
+      tampilToast(warga, reaksi);
+    }
+    function tampilToast(siapa, teks){
+      var t = $('toast');
+      t.innerHTML = '<span class="siapa">Reaksi warga — ' + esc(siapa) + '</span>' + esc(teks);
+      t.hidden = false;
+      document.body.classList.add('toast-aktif');
+    }
+    function sembunyiToast(){ $('toast').hidden = true; document.body.classList.remove('toast-aktif'); }
+    $('toast').addEventListener('click', sembunyiToast);
+
+    /* ================= PENCAPAIAN ================= */
+    function bukaPencapaian(id){
+      var ach = lsGet(K_ACH, {});
+      if(ach[id]) return null;
+      ach[id] = true; lsSet(K_ACH, ach);
+      for(var i=0;i<PENCAPAIAN.length;i++) if(PENCAPAIAN[i].id===id) return PENCAPAIAN[i].nama;
+      return null;
+    }
+    function cekPencapaianRun(){
+      var baru = [];
+      if(S.tegas >= 5){ var a=bukaPencapaian('tegas'); if(a) baru.push(a); }
+      if(S.malamSelesai >= 2){ var b=bukaPencapaian('siaga'); if(b) baru.push(b); }
+      return baru;
+    }
+
+    /* ================= ALUR PILIHAN ================= */
+    function terapkanEfek(p){
+      S.kas += p.kas;
+      S.rukun = Math.max(0, Math.min(100, S.rukun + p.ruk));
+      S.rep = Math.max(0, Math.min(100, S.rep + p.rep));
+    }
+    function cekKalah(){
+      if(S.kas < 0) return 'bangkrut';
+      if(S.rukun <= 0) return 'demo';
+      if(S.rep <= 0) return 'dicopot';
+      return null;
+    }
+    function pilihKeputusan(i){
+      var k = S.kini, p = k.pilihan[i];
+      bunyiPilih();
+      terapkanEfek(p);
+      S.keputusan++;
+      if(p.tegas) S.tegas++;
+      if(k.jenis==='malam') S.malamSelesai++;
+      var baru = cekPencapaianRun();
+      S.baruBuka = S.baruBuka.concat(baru);
+      if(p.ruk < 0 || p.rep < 0 || (p.kas < 0 && p.ruk <= 0 && p.rep <= 0)) bunyiBuruk();
+
+      var kalah = cekKalah();
+      tampilHasil(p.stamp, p.kas, p.ruk, p.rep, p.react, k.warga, baru);
+
+      var area = $('area-lanjut'), btn = document.createElement('button');
+      btn.className = 'btn btn-primer'; btn.type = 'button';
+      if(kalah){
+        btn.textContent = 'Lihat Hasil Akhir';
+        btn.addEventListener('click', function(){ akhirRun(false, kalah); });
+      } else if(S.antre.length > 0){
+        btn.textContent = 'Kejadian Berikutnya';
+        btn.addEventListener('click', function(){ sembunyiToast(); kartuBerikut(); });
+      } else if(k.jenis !== 'malam' && S.hari >= 3 && S.idxMalam < S.dekMalam.length && Math.random() < 0.25){
+        btn.textContent = 'Ada Kejadian Malam Ini';
+        btn.addEventListener('click', function(){
+          sembunyiToast();
+          S.antre.push(kartuById(S.dekMalam[S.idxMalam])); S.idxMalam++;
+          kartuBerikut();
+        });
+      } else if(S.hari >= 30){
+        btn.textContent = 'Selesaikan Masa Jabatan';
+        btn.addEventListener('click', function(){ akhirRun(true, null); });
+      } else {
+        btn.textContent = 'Lanjut Besok';
+        btn.addEventListener('click', function(){
+          sembunyiToast();
+          S.hari++;
+          simpanRun();
+          mulaiHari();
+        });
+      }
+      area.innerHTML = '';
+      area.appendChild(btn);
+      btn.focus();
+      btn.scrollIntoView({ block:'center' });
+    }
+    function terimaIuran(){
+      bunyiPilih();
+      S.kas += 150000;
+      tampilHasil('DICATAT', 150000, 0, 0, 'Iuran Rp 150.000 masuk ke kas RT. Buku kas sudah diperbarui, warga bisa cek kapan saja.', 'Bendahara RT', []);
+      var area = $('area-lanjut'), btn = document.createElement('button');
+      btn.className = 'btn btn-primer'; btn.type = 'button';
+      btn.textContent = 'Kejadian Berikutnya';
+      btn.addEventListener('click', function(){ sembunyiToast(); kartuBerikut(); });
+      area.innerHTML = '';
+      area.appendChild(btn);
+      btn.focus();
+      btn.scrollIntoView({ block:'center' });
+    }
+
+    /* ================= AKHIR RUN ================= */
+    function skorAkhir(){
+      return Math.round(S.rukun + S.rep + Math.min(S.kas, 1000000)/10000);
+    }
+    function peringkat(s){
+      if(s >= 190) return 'Legenda RT 05';
+      if(s >= 160) return 'RT Teladan';
+      if(s >= 120) return 'RT Lumayan';
+      return 'RT Pas-pasan';
+    }
+    function akhirRun(menang, alasan){
+      sembunyiToast();
+      var skor = skorAkhir();
+      if(menang){
+        var b;
+        if((b = bukaPencapaian('penuh'))) S.baruBuka.push(b);
+        if(S.kas >= 1000000 && (b = bukaPencapaian('bendahara'))) S.baruBuka.push(b);
+        if(S.rukun >= 100 && (b = bukaPencapaian('damai'))) S.baruBuka.push(b);
+        if(S.rep >= 100 && (b = bukaPencapaian('lurah'))) S.baruBuka.push(b);
+        bunyiMenang();
+      }
+      var best = lsGet(K_BEST, 0);
+      if(skor > best) lsSet(K_BEST, skor);
+      var hist = lsGet(K_HIST, []);
+      hist.unshift({ t: Date.now(), menang: menang, alasan: alasan || '', hari: S.hari, skor: skor });
+      lsSet(K_HIST, hist.slice(0, 10));
+      lsDel(K_SAVE);
+      gambarAkhir(menang, alasan, skor);
+      tampilLayar('akhir');
+      if(menang) confetti();
+    }
+    function gambarAkhir(menang, alasan, skor){
+      var judul, pesan;
+      if(menang){
+        judul = 'Masa Jabatan Selesai!';
+        pesan = 'Kamu berhasil memimpin RT 05 selama 30 hari penuh. Warga mengadakan syukuran kecil di pos ronda — ada tumpeng dan es teh untuk semua.';
+      } else if(alasan === 'bangkrut'){
+        judul = 'Kas RT Ludes!';
+        pesan = 'Kas RT menembus di bawah nol. Bendahara menutup buku kas sambil geleng-geleng, dan RW turun tangan membekukan keuangan RT 05.';
+      } else if(alasan === 'demo'){
+        judul = 'Warga Demo ke Pos Ronda!';
+        pesan = 'Kerukunan habis. Warga beramai-ramai datang ke pos ronda menuntut Pak RT mundur. Spanduknya sudah jadi dari kemarin, rupanya.';
+      } else {
+        judul = 'Dicopot oleh Pak RW!';
+        pesan = 'Reputasi habis. Pak RW memanggilmu ke balai warga dan mencopot jabatan Ketua RT 05 efektif mulai hari ini.';
+      }
+      var html = '';
+      html += '<span class="lencana">' + (menang ? 'TAMAT — 30 HARI' : 'JABATAN BERAKHIR') + '</span>';
+      html += '<h2>' + judul + '</h2>';
+      html += '<p class="alasan">' + pesan + '</p>';
+      html += '<div class="skor-besar">' + skor + '</div>';
+      html += '<div class="skor-label">Skor Akhir</div>';
+      if(menang) html += '<div><span class="peringkat">' + peringkat(skor) + '</span></div>';
+      html += '<div class="stat-grid">';
+      html += '<div class="stat"><div class="k">Hari Tercapai</div><div class="v">' + S.hari + ' / 30</div></div>';
+      html += '<div class="stat"><div class="k">Kas Akhir</div><div class="v">' + rp(S.kas) + '</div></div>';
+      html += '<div class="stat"><div class="k">Kerukunan</div><div class="v">' + S.rukun + '</div></div>';
+      html += '<div class="stat"><div class="k">Reputasi</div><div class="v">' + S.rep + '</div></div>';
+      html += '<div class="stat"><div class="k">Keputusan Diambil</div><div class="v">' + S.keputusan + '</div></div>';
+      html += '<div class="stat"><div class="k">Kejadian Malam</div><div class="v">' + S.malamSelesai + '</div></div>';
+      html += '</div>';
+      if(menang && S.baruBuka.length){
+        html += '<div class="akhir-baru"><h3>Pencapaian Baru Terbuka</h3><div class="galeri">';
+        S.baruBuka.forEach(function(nama){
+          var p = null;
+          PENCAPAIAN.forEach(function(x){ if(x.nama===nama) p = x; });
+          if(p) html += '<div class="pencapaian"><div class="ikon-bungkus">' + IKON[p.ikon] + '</div><div><h3>' + esc(p.nama) + '</h3><p>' + esc(p.desc) + '</p></div></div>';
+        });
+        html += '</div></div>';
+      }
+      $('akhir-kotak').innerHTML = html;
+      $('btn-lagi').textContent = menang ? 'Main Lagi' : 'Coba Lagi';
+    }
+    function confetti(){
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var layer = $('confetti-layer');
+      var warna = ['#F97316','#2563EB','#16A34A','#EAB308','#DC2626','#9A3412'];
+      for(var i=0;i<60;i++){
+        var d = document.createElement('div');
+        d.className = 'confetti';
+        var uk = 6 + Math.random()*7;
+        d.style.left = (Math.random()*100) + '%';
+        d.style.width = uk + 'px';
+        d.style.height = (uk*0.6) + 'px';
+        d.style.background = warna[i % warna.length];
+        d.style.animationDuration = (2.4 + Math.random()*1.8) + 's';
+        d.style.animationDelay = (Math.random()*0.7) + 's';
+        layer.appendChild(d);
+      }
+      setTimeout(function(){ layer.innerHTML=''; }, 5200);
+    }
+
+    /* ================= MENU ================= */
+    function gambarMenu(){
+      var best = lsGet(K_BEST, 0);
+      $('skor-terbaik').textContent = 'Skor Terbaik: ' + (best > 0 ? best : '—');
+      $('btn-lanjut').hidden = !lsGet(K_SAVE, null);
+      var ach = lsGet(K_ACH, {});
+      $('galeri-pencapaian').innerHTML = PENCAPAIAN.map(function(p){
+        var buka = !!ach[p.id];
+        return '<div class="pencapaian' + (buka ? '' : ' terkunci') + '">'
+          + '<div class="ikon-bungkus">' + (buka ? IKON[p.ikon] : IKON.gembok) + '</div>'
+          + '<div><h3>' + esc(p.nama) + '</h3><p>' + esc(p.desc) + '</p>'
+          + '<span class="status ' + (buka ? 'buka' : 'kunci') + '">' + (buka ? 'TERBUKA' : 'TERKUNCI') + '</span></div></div>';
+      }).join('');
+      var hist = lsGet(K_HIST, []);
+      if(!hist.length){
+        $('riwayat-wadah').innerHTML = '<p class="riwayat-kosong">Belum ada riwayat. Masa jabatan pertamamu menanti.</p>';
+      } else {
+        var labelAlasan = { bangkrut:'Kas bangkrut', demo:'Warga demo', dicopot:'Dicopot RW' };
+        $('riwayat-wadah').innerHTML = '<ul class="riwayat">' + hist.map(function(h){
+          var tgl = new Date(h.t).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+          var hasil = h.menang ? 'Tamat 30 hari' : ('Gugur — ' + (labelAlasan[h.alasan] || 'berakhir'));
+          return '<li><div><div class="hasil ' + (h.menang ? 'menang' : 'kalah') + '">' + hasil + '</div><div>' + tgl + '</div></div>'
+            + '<div class="meta">Hari ' + h.hari + ' / 30<br>Skor ' + h.skor + '</div></li>';
+        }).join('') + '</ul>';
+      }
+    }
+
+    /* ================= NAVIGASI & SUARA ================= */
+    function tampilLayar(nama){
+      $('layar-menu').hidden = nama !== 'menu';
+      $('layar-main').hidden = nama !== 'main';
+      $('layar-akhir').hidden = nama !== 'akhir';
+      if(nama !== 'main') sembunyiToast();
+      window.scrollTo({ top:0 });
+    }
+    function gambarTombolSuara(){
+      var html = (suaraNyala ? IKON.suaraOn : IKON.suaraOff) + '<span>' + (suaraNyala ? 'Suara Nyala' : 'Suara Mati') + '</span>';
+      $('btn-suara-menu').innerHTML = html;
+      $('btn-suara-main').innerHTML = html;
+    }
+    function toggleSuara(){
+      suaraNyala = !suaraNyala;
+      lsSet(K_SOUND, suaraNyala);
+      gambarTombolSuara();
+      if(suaraNyala) bunyiPilih();
+    }
+    $('btn-suara-menu').addEventListener('click', toggleSuara);
+    $('btn-suara-main').addEventListener('click', toggleSuara);
+    $('btn-mulai').addEventListener('click', function(){ bunyiPilih(); runBaru(); tampilLayar('main'); });
+    $('btn-lanjut').addEventListener('click', function(){ if(muatRun()){ bunyiPilih(); tampilLayar('main'); } });
+    $('btn-lagi').addEventListener('click', function(){ bunyiPilih(); runBaru(); tampilLayar('main'); });
+    $('btn-menu').addEventListener('click', function(){ gambarMenu(); tampilLayar('menu'); });
+
+    gambarTombolSuara();
+    gambarMenu();
+    tampilLayar('menu');
+    </script>
+  </body>
+</html>
